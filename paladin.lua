@@ -646,6 +646,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 	local _HammerofWrath, _HammerofWrath_RDY = ConRO:AbilityReady(Ability.HammerofWrath, timeShift);
 	local _Judgment, _Judgment_RDY = ConRO:AbilityReady(Ability.Judgment, timeShift);
 		local _Judgment_DEBUFF = ConRO:TargetAura(Debuff.Judgment, timeShift);
+		local _EmpyreanLegacy_BUFF = ConRO:Aura(Buff.EmpyreanLegacy, timeShift);
 	local _JusticarsVengeance, _JusticarsVengeance_RDY = ConRO:AbilityReady(Ability.JusticarsVengeance, timeShift);
 	local _Rebuke, _Rebuke_RDY = ConRO:AbilityReady(Ability.Rebuke, timeShift);
 	local _TemplarsVerdict, _TemplarsVerdict_RDY = ConRO:AbilityReady(Ability.TemplarsVerdict, timeShift);
@@ -778,7 +779,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 			end
 		end
 
-		if (ConRO_AutoButton:IsVisible() and (_enemies_in_melee >= 2)) and _DivineArbiter_COUNT < 25 then
+		if (ConRO_AutoButton:IsVisible() and (_enemies_in_melee >= 2)) and _DivineArbiter_COUNT < 25 and not _EmpyreanLegacy_BUFF then
 			if _DivineStorm_RDY and _HolyPower >= 4 then
 				tinsert(ConRO.SuggestedSpells, _DivineStorm);
 				_HolyPower = _HolyPower - 3;
