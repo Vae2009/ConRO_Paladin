@@ -175,70 +175,68 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedSpells)
 	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Holy_Ability, ids.Holy_Form, ids.Holy_Buff, ids.Holy_Debuff, ids.Holy_PetAbility, ids.Holy_PvPTalent, ids.Glyph;
 --Info
-	local _Player_Level																														= UnitLevel("player");
-	local _Player_Percent_Health 																									= ConRO:PercentHealth('player');
-	local _is_PvP																																	= ConRO:IsPvP();
-	local _in_combat 																															= UnitAffectingCombat('player');
-	local _party_size																															= GetNumGroupMembers();
+	local _Player_Level = UnitLevel("player");
+	local _Player_Percent_Health = ConRO:PercentHealth('player');
+	local _is_PvP = ConRO:IsPvP();
+	local _in_combat = UnitAffectingCombat('player');
+	local _party_size = GetNumGroupMembers();
 
-	local _is_PC																																	= UnitPlayerControlled("target");
-	local _is_Enemy 																															= ConRO:TarHostile();
-	local _Target_Health 																													= UnitHealth('target');
-	local _Target_Percent_Health 																									= ConRO:PercentHealth('target');
+	local _is_PC = UnitPlayerControlled("target");
+	local _is_Enemy = ConRO:TarHostile();
+	local _Target_Health = UnitHealth('target');
+	local _Target_Percent_Health = ConRO:PercentHealth('target');
 
 --Resources
-	local _Mana, _Mana_Max, _Mana_Percent																					= ConRO:PlayerPower('Mana');
-	local _HolyPower, _HolyPower_Max																							= ConRO:PlayerPower('HolyPower');
+	local _Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
+	local _HolyPower, _HolyPower_Max = ConRO:PlayerPower('HolyPower');
 
 --Racials
-	local _ArcaneTorrent, _ArcaneTorrent_RDY																			= ConRO:AbilityReady(Racial.ArcaneTorrent, timeShift);
+	local _ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(Racial.ArcaneTorrent, timeShift);
 
 --Abilities
 	--Paladin
-	local _AvengingWrath, _AvengingWrath_RDY 																			= ConRO:AbilityReady(Ability.AvengingWrath, timeShift);
-	local _BlessingofFreedom, _BlessingofFreedom_RDY	 														= ConRO:AbilityReady(Ability.BlessingofFreedom, timeShift);
-	local _BlindingLight, _BlindingLight_RDY	 																		= ConRO:AbilityReady(Ability.BlindingLight, timeShift);
-	local _Consecration, _Consecration_RDY 																				= ConRO:AbilityReady(Ability.Consecration, timeShift);
-	local _CrusaderStrike, _CrusaderStrike_RDY				 														= ConRO:AbilityReady(Ability.CrusaderStrike, timeShift);
-		local _CrusaderStrike_CHARGES																									= ConRO:SpellCharges(Ability.CrusaderStrike.spellID);
-	local _DivineSteed, _DivineSteed_RDY	 																				= ConRO:AbilityReady(Ability.DivineSteed, timeShift);
-	local _HammerofJustice, _HammerofJustice_RDY 																	= ConRO:AbilityReady(Ability.HammerofJustice, timeShift);
-	local _HammerofWrath, _HammerofWrath_RDY 																			= ConRO:AbilityReady(Ability.HammerofWrath, timeShift);
-	local _HolyAvenger, _HolyAvenger_RDY	 																				= ConRO:AbilityReady(Ability.HolyAvenger, timeShift);
-	local _Judgment, _Judgment_RDY	 																							= ConRO:AbilityReady(Ability.Judgment, timeShift);
-	local _Rebuke, _Rebuke_RDY	 																									= ConRO:AbilityReady(Ability.Rebuke, timeShift);
-	local _Repentance, _Repentance_RDY	 																					= ConRO:AbilityReady(Ability.Repentance, timeShift);
-	local _Seraphim, _Seraphim_RDY	 																							= ConRO:AbilityReady(Ability.Seraphim, timeShift);
-	local _ShieldoftheRighteous, _ShieldoftheRighteous_RDY	 											= ConRO:AbilityReady(Ability.ShieldoftheRighteous, timeShift);
-	local _TurnEvil, _TurnEvil_RDY	 																							= ConRO:AbilityReady(Ability.TurnEvil, timeShift);
-	local _WordofGlory, _WordofGlory_RDY	 																				= ConRO:AbilityReady(Ability.WordofGlory, timeShift);
-		local _DivinePurpose_BUFF																											= ConRO:Aura(Buff.DivinePurpose);
-  --Holy
-	local _AuraMastery, _AuraMastery_RDY 																					= ConRO:AbilityReady(Ability.AuraMastery, timeShift);
-	local _AvengingCrusader, _AvengingCrusader_RDY 																= ConRO:AbilityReady(Ability.AvengingCrusader, timeShift);
-	local _BeaconofFaith, _BeaconofFaith_RDY 																			= ConRO:AbilityReady(Ability.BeaconofFaith, timeShift);
-	local _BeaconofLight, _BeaconofLight_RDY 																			= ConRO:AbilityReady(Ability.BeaconofLight, timeShift);
-	local _BlessingofAutumn, _BlessingofAutumn_RDY 																= ConRO:AbilityReady(Ability.BlessingofAutumn, timeShift);
-	local _BlessingofSpring, _BlessingofSpring_RDY 																= ConRO:AbilityReady(Ability.BlessingofSpring, timeShift);
-	local _BlessingofSummer, _BlessingofSummer_RDY 																= ConRO:AbilityReady(Ability.BlessingofSummer, timeShift);
-	local _BlessingofWinter, _BlessingofWinter_RDY 																= ConRO:AbilityReady(Ability.BlessingofWinter, timeShift);
-	local _DivineToll, _DivineToll_RDY 																						= ConRO:AbilityReady(Ability.DivineToll, timeShift);
-	local _HolyPrism, _HolyPrism_RDY 																							= ConRO:AbilityReady(Ability.HolyPrism, timeShift);
-	local _HolyShock, _HolyShock_RDY 																							= ConRO:AbilityReady(Ability.HolyShock, timeShift);
-	local _LightofDawn, _LightofDawn_RDY	 																				= ConRO:AbilityReady(Ability.LightofDawn, timeShift);
-	local _LightsHammer, _LightsHammer_RDY																				= ConRO:AbilityReady(Ability.LightsHammer, timeShift);
+	local _AvengingWrath, _AvengingWrath_RDY = ConRO:AbilityReady(Ability.AvengingWrath, timeShift);
+	local _BlessingofFreedom, _BlessingofFreedom_RDY = ConRO:AbilityReady(Ability.BlessingofFreedom, timeShift);
+	local _BlindingLight, _BlindingLight_RDY = ConRO:AbilityReady(Ability.BlindingLight, timeShift);
+	local _Consecration, _Consecration_RDY = ConRO:AbilityReady(Ability.Consecration, timeShift);
+	local _CrusaderStrike, _CrusaderStrike_RDY = ConRO:AbilityReady(Ability.CrusaderStrike, timeShift);
+		local _CrusaderStrike_CHARGES = ConRO:SpellCharges(Ability.CrusaderStrike.spellID);
+	local _DivineSteed, _DivineSteed_RDY = ConRO:AbilityReady(Ability.DivineSteed, timeShift);
+	local _HammerofJustice, _HammerofJustice_RDY = ConRO:AbilityReady(Ability.HammerofJustice, timeShift);
+	local _HammerofWrath, _HammerofWrath_RDY = ConRO:AbilityReady(Ability.HammerofWrath, timeShift);
+	local _Judgment, _Judgment_RDY = ConRO:AbilityReady(Ability.Judgment, timeShift);
+	local _Rebuke, _Rebuke_RDY = ConRO:AbilityReady(Ability.Rebuke, timeShift);
+	local _Repentance, _Repentance_RDY = ConRO:AbilityReady(Ability.Repentance, timeShift);
+	local _ShieldoftheRighteous, _ShieldoftheRighteous_RDY = ConRO:AbilityReady(Ability.ShieldoftheRighteous, timeShift);
+	local _TurnEvil, _TurnEvil_RDY = ConRO:AbilityReady(Ability.TurnEvil, timeShift);
+	local _WordofGlory, _WordofGlory_RDY = ConRO:AbilityReady(Ability.WordofGlory, timeShift);
+		local _DivinePurpose_BUFF = ConRO:Aura(Buff.DivinePurpose);
+ 	 --Holy
+	local _AuraMastery, _AuraMastery_RDY = ConRO:AbilityReady(Ability.AuraMastery, timeShift);
+	local _AvengingCrusader, _AvengingCrusader_RDY = ConRO:AbilityReady(Ability.AvengingCrusader, timeShift);
+	local _BeaconofFaith, _BeaconofFaith_RDY = ConRO:AbilityReady(Ability.BeaconofFaith, timeShift);
+	local _BeaconofLight, _BeaconofLight_RDY = ConRO:AbilityReady(Ability.BeaconofLight, timeShift);
+	local _BlessingofAutumn, _BlessingofAutumn_RDY = ConRO:AbilityReady(Ability.BlessingofAutumn, timeShift);
+	local _BlessingofSpring, _BlessingofSpring_RDY = ConRO:AbilityReady(Ability.BlessingofSpring, timeShift);
+	local _BlessingofSummer, _BlessingofSummer_RDY = ConRO:AbilityReady(Ability.BlessingofSummer, timeShift);
+	local _BlessingofWinter, _BlessingofWinter_RDY = ConRO:AbilityReady(Ability.BlessingofWinter, timeShift);
+	local _DivineToll, _DivineToll_RDY = ConRO:AbilityReady(Ability.DivineToll, timeShift);
+	local _HolyPrism, _HolyPrism_RDY = ConRO:AbilityReady(Ability.HolyPrism, timeShift);
+	local _HolyShock, _HolyShock_RDY = ConRO:AbilityReady(Ability.HolyShock, timeShift);
+	local _LightofDawn, _LightofDawn_RDY = ConRO:AbilityReady(Ability.LightofDawn, timeShift);
+	local _LightsHammer, _LightsHammer_RDY = ConRO:AbilityReady(Ability.LightsHammer, timeShift);
 
 		if tChosen[Ability.SanctifiedWrath.talentID] then
-			_AvengingWrath, _AvengingWrath_RDY																					= ConRO:AbilityReady(Ability.SanctifiedWrath, timeShift);
+			_AvengingWrath, _AvengingWrath_RDY = ConRO:AbilityReady(Ability.SanctifiedWrath, timeShift);
 		elseif tChosen[Ability.AvengingWrathMight.talentID] then
-			_AvengingWrath, _AvengingWrath_RDY																					= ConRO:AbilityReady(Ability.AvengingWrathMight, timeShift);
+			_AvengingWrath, _AvengingWrath_RDY = ConRO:AbilityReady(Ability.AvengingWrathMight, timeShift);
 		end
 
 --Conditions
-	local _is_moving 																															= ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee																			= ConRO:Targets("Melee");
-	local _target_in_10yrds 																											= CheckInteractDistance("target", 3);
-	local _can_execute																														= _Target_Percent_Health <= 20;
+	local _is_moving = ConRO:PlayerSpeed();
+	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
+	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _can_execute = _Target_Percent_Health <= 20;
 
 		if _DivinePurpose_BUFF then
 			_HolyPower = 5;
