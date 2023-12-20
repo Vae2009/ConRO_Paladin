@@ -126,7 +126,7 @@ function ConRO.Paladin.Under10(_, timeShift, currentSpell, gcd, tChosen, pvpChos
 --Conditions
 	local _is_moving 																															= ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee																			= ConRO:Targets("Melee");
-	local _target_in_10yrds 																											= CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Warnings
 
@@ -162,7 +162,7 @@ function ConRO.Paladin.Under10Def(_, timeShift, currentSpell, gcd, tChosen, pvpC
 --Conditions
 	local _is_moving 																															= ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee																			= ConRO:Targets("Melee");
-	local _target_in_10yrds 																											= CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Warnings
 
@@ -235,7 +235,7 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 --Conditions
 	local _is_moving = ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 	local _can_execute = _Target_Percent_Health <= 20;
 
 		if _DivinePurpose_BUFF then
@@ -346,7 +346,7 @@ function ConRO.Paladin.HolyDef(_, timeShift, currentSpell, gcd, tChosen, pvpChos
 --Conditions
 	local _is_moving 																															= ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee																			= ConRO:Targets("Melee");
-	local _target_in_10yrds 																											= CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Rotations
 		if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
@@ -565,7 +565,7 @@ function ConRO.Paladin.ProtectionDef(_, timeShift, currentSpell, gcd, tChosen, p
 --Conditions
 	local _is_moving = ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Rotations
 		if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
@@ -856,7 +856,7 @@ function ConRO.Paladin.RetributionDef(_, timeShift, currentSpell, gcd, tChosen, 
 --Conditions
 	local _is_moving = ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Rotations
 		if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
