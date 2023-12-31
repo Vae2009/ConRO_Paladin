@@ -486,6 +486,7 @@ local ConRO_Paladin, ids = ...;
 		Crusade = 231895,
 		DivineArbiter = 406975,
 		EmpyreanLegacy = 387178,
+		FinalVerdict = 383329,
 		RighteousVerdict = 267611,
 		DivinePurpose = 223819,
 		EmpyreanPower = 326733,
