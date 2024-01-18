@@ -178,6 +178,7 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedSpells);
 	ConRO:Stats();
 	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Holy_Ability, ids.Holy_Form, ids.Holy_Buff, ids.Holy_Debuff, ids.Holy_PetAbility, ids.Holy_PvPTalent;
+
 --Abilities
 	--Paladin
 	local _AvengingWrath, _AvengingWrath_RDY = ConRO:AbilityReady(Ability.AvengingWrath, timeShift);
@@ -300,12 +301,13 @@ function ConRO.Paladin.HolyDef(_, timeShift, currentSpell, gcd, tChosen, pvpChos
 	wipe(ConRO.SuggestedDefSpells);
 	ConRO:Stats();
 	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Holy_Ability, ids.Holy_Form, ids.Holy_Buff, ids.Holy_Debuff, ids.Holy_PetAbility, ids.Holy_PvPTalent;
+
 --Abilities
-	local _BlessingofProtection, _BlessingofProtection_RDY 												= ConRO:AbilityReady(ids.Holy_Ability.BlessingofProtection, timeShift);
-	local _DivineProtection, _DivineProtection_RDY 																= ConRO:AbilityReady(ids.Holy_Ability.DivineProtection, timeShift);
-	local _DivineShield, _DivineShield_RDY 																				= ConRO:AbilityReady(ids.Holy_Ability.DivineShield, timeShift);
-	local _LayonHands, _LayonHands_RDY 																						= ConRO:AbilityReady(ids.Holy_Ability.LayonHands, timeShift);
-		local _Forbearance_BUFF 																											= ConRO:Aura(ids.Holy_Debuff.Forbearance, timeShift, 'HARMFUL');
+	local _BlessingofProtection, _BlessingofProtection_RDY = ConRO:AbilityReady(ids.Holy_Ability.BlessingofProtection, timeShift);
+	local _DivineProtection, _DivineProtection_RDY = ConRO:AbilityReady(ids.Holy_Ability.DivineProtection, timeShift);
+	local _DivineShield, _DivineShield_RDY = ConRO:AbilityReady(ids.Holy_Ability.DivineShield, timeShift);
+	local _LayonHands, _LayonHands_RDY = ConRO:AbilityReady(ids.Holy_Ability.LayonHands, timeShift);
+		local _Forbearance_BUFF = ConRO:Aura(ids.Holy_Debuff.Forbearance, timeShift, 'HARMFUL');
 
 --Rotations
 		if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
@@ -328,6 +330,7 @@ function ConRO.Paladin.Protection(_, timeShift, currentSpell, gcd, tChosen, pvpC
 	wipe(ConRO.SuggestedSpells);
 	ConRO:Stats();
 	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Prot_Ability, ids.Prot_Form, ids.Prot_Buff, ids.Prot_Debuff, ids.Prot_PetAbility, ids.Prot_PvPTalent;
+
 --Abilities
 	local _AvengersShield, _AvengersShield_RDY = ConRO:AbilityReady(Ability.AvengersShield, timeShift);
 		local _AvengersShield_enemies, _AvengersShield_RANGE = ConRO:Targets(Ability.AvengersShield);
@@ -466,6 +469,7 @@ function ConRO.Paladin.ProtectionDef(_, timeShift, currentSpell, gcd, tChosen, p
 	wipe(ConRO.SuggestedDefSpells);
 	ConRO:Stats();
 	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Prot_Ability, ids.Prot_Form, ids.Prot_Buff, ids.Prot_Debuff, ids.Prot_PetAbility, ids.Prot_PvPTalent;
+
 --Abilities
 	local _ArdentDefender, _ArdentDefender_RDY, _ArdentDefender_CD = ConRO:AbilityReady(Ability.ArdentDefender, timeShift);
 		local _ArdentDefender_BUFF = ConRO:Aura(Buff.ArdentDefender, timeShift);
@@ -517,6 +521,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 	wipe(ConRO.SuggestedSpells);
 	ConRO:Stats();
 	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Ret_Ability, ids.Ret_Form, ids.Ret_Buff, ids.Ret_Debuff, ids.Ret_PetAbility, ids.Ret_PvPTalent;
+
 --Abilities
 	local _AvengingWrath, _AvengingWrath_RDY, _AvengingWrath_CD = ConRO:AbilityReady(Ability.AvengingWrath, timeShift);
 		local _AvengingWrath_BUFF = ConRO:Aura(Buff.AvengingWrath, timeShift);
@@ -713,6 +718,7 @@ function ConRO.Paladin.RetributionDef(_, timeShift, currentSpell, gcd, tChosen, 
 	wipe(ConRO.SuggestedDefSpells);
 	ConRO:Stats();
 	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Ret_Ability, ids.Ret_Form, ids.Ret_Buff, ids.Ret_Debuff, ids.Ret_PetAbility, ids.Ret_PvPTalent;
+
 --Abilities
 	local _BlessingofProtection, _BlessingofProtection_RDY = ConRO:AbilityReady(Ability.BlessingofProtection, timeShift);
 	local _DivineShield, _DivineShield_RDY = ConRO:AbilityReady(Ability.DivineShield, timeShift);
