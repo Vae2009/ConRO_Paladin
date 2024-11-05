@@ -619,11 +619,11 @@ local ConRO_Paladin, ids = ...;
 	}
 	ids.Ret_Buff = {
 		AvengingWrath = 31884,
-		BlessingofAnshe = 0,
+		BlessingofAnshe = 445206,
 		Crusade = 231895,
 		DivineArbiter = 406975,
 		EmpyreanLegacy = 387178,
-		EndlessWrath = 0,
+		EndlessWrath = 452244,
 		FinalVerdict = 383329,
 		RighteousVerdict = 267611,
 		DivinePurpose = 223819,
