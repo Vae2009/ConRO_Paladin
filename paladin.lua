@@ -653,7 +653,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 			_ExecutionSentence_RDY = false;
 		end
 
-		if _HammerofLight_RDY and ConRO:IsOverride(_WakeofAshes) == _HammerofLight and _HolyPower >= 5 and ConRO:HeroSpec(HeroSpec.Templar) then
+		if _HammerofLight_RDY and ConRO:IsOverride(_WakeofAshes) == _HammerofLight and ConRO:HeroSpec(HeroSpec.Templar) then
 			tinsert(ConRO.SuggestedSpells, _HammerofLight);
 			_HammerofLight_RDY = false;
 		end
