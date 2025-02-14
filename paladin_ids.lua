@@ -208,13 +208,17 @@ local ConRO_Paladin, ids = ...;
 		Consecration = 188370,
 		CrusaderAura = 32223,
 		DevotionAura = 465,
+		DivineFavor = 210294,
 		RetributionAura = 183435,
 	}
 	ids.Holy_Buff = {
 		AvengingWrath = 31884,
 		DivinePurpose = 223819,
+		InfusionofLight = 54149,
+		Veneration = 392939,
 	}
 	ids.Holy_Debuff = {
+		Consecration = 204242,
 		Forbearance = 25771,
 		Judgment = 197277,
 	}
@@ -630,7 +634,7 @@ local ConRO_Paladin, ids = ...;
 		EmpyreanPower = 326733,
 	}
 	ids.Ret_Debuff = {
-		Consecration = 204242;
+		Consecration = 204242,
 		Expurgation = 383346,
 		Forbearance = 25771,
 		Judgment = 197277,

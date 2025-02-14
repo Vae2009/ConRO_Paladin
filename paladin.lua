@@ -110,6 +110,7 @@ local _is_PC = UnitPlayerControlled("target");
 local _is_Enemy = ConRO:TarHostile();
 local _Target_Health = UnitHealth('target');
 local _Target_Percent_Health = ConRO:PercentHealth('target');
+local _TTD = ConRO:GetTimeToDie();
 
 --Resources
 local _Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
@@ -188,18 +189,20 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _BlessingofFreedom, _BlessingofFreedom_RDY = ConRO:AbilityReady(Ability.BlessingofFreedom, timeShift);
 	local _BlindingLight, _BlindingLight_RDY = ConRO:AbilityReady(Ability.BlindingLight, timeShift);
 	local _Consecration, _Consecration_RDY = ConRO:AbilityReady(Ability.Consecration, timeShift);
+		local _Consecration_DEBUFF = ConRO:TargetAura(Debuff.Consecration, timeShift);
 	local _CrusaderStrike, _CrusaderStrike_RDY = ConRO:AbilityReady(Ability.CrusaderStrike, timeShift);
 		local _CrusaderStrike_CHARGES = ConRO:SpellCharges(Ability.CrusaderStrike.spellID);
 	local _DivineSteed, _DivineSteed_RDY = ConRO:AbilityReady(Ability.DivineSteed, timeShift);
 	local _HammerofJustice, _HammerofJustice_RDY = ConRO:AbilityReady(Ability.HammerofJustice, timeShift);
 	local _HammerofWrath, _HammerofWrath_RDY = ConRO:AbilityReady(Ability.HammerofWrath, timeShift);
+	local _HolyLight, _HolyLight_RDY = ConRO:AbilityReady(Ability.HolyLight, timeShift);
 	local _Judgment, _Judgment_RDY = ConRO:AbilityReady(Ability.Judgment, timeShift);
 	local _Rebuke, _Rebuke_RDY = ConRO:AbilityReady(Ability.Rebuke, timeShift);
 	local _Repentance, _Repentance_RDY = ConRO:AbilityReady(Ability.Repentance, timeShift);
 	local _ShieldoftheRighteous, _ShieldoftheRighteous_RDY = ConRO:AbilityReady(Ability.ShieldoftheRighteous, timeShift);
 	local _TurnEvil, _TurnEvil_RDY = ConRO:AbilityReady(Ability.TurnEvil, timeShift);
 	local _WordofGlory, _WordofGlory_RDY = ConRO:AbilityReady(Ability.WordofGlory, timeShift);
-		local _DivinePurpose_BUFF = ConRO:Aura(Buff.DivinePurpose);
+		local _DivinePurpose_BUFF = ConRO:Aura(Buff.DivinePurpose, timeShift);
 	local _AuraMastery, _AuraMastery_RDY = ConRO:AbilityReady(Ability.AuraMastery, timeShift);
 	local _AvengingCrusader, _AvengingCrusader_RDY = ConRO:AbilityReady(Ability.AvengingCrusader, timeShift);
 	local _BeaconofFaith, _BeaconofFaith_RDY = ConRO:AbilityReady(Ability.BeaconofFaith, timeShift);
@@ -210,27 +213,20 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _BlessingofWinter, _BlessingofWinter_RDY = ConRO:AbilityReady(Ability.BlessingofWinter, timeShift);
 	local _DivineToll, _DivineToll_RDY = ConRO:AbilityReady(Ability.DivineToll, timeShift);
 	local _HolyPrism, _HolyPrism_RDY = ConRO:AbilityReady(Ability.HolyPrism, timeShift);
+		local _DivineFavor_FORM = ConRO:Form(Form.DivineFavor);
 	local _HolyShock, _HolyShock_RDY = ConRO:AbilityReady(Ability.HolyShock, timeShift);
+		local _InfusionofLight_BUFF = ConRO:Aura(Buff.InfusionofLight, timeShift);
 	local _LightofDawn, _LightofDawn_RDY = ConRO:AbilityReady(Ability.LightofDawn, timeShift);
+	local _ShieldoftheRighteous, _ShieldoftheRighteous_RDY = ConRO:AbilityReady(Ability.ShieldoftheRighteous, timeShift);
+		local _Veneration_BUFF = ConRO:Aura(Buff.Veneration, timeShift);
 
 	if _DivinePurpose_BUFF then
 		_HolyPower = 5;
 	end
 
-	local _BlessingoftheSeasons_RDY = _BlessingofSummer_RDY;
-	local _BlessingoftheSeasons = false;
-		if ConRO:FindCurrentSpell(_BlessingofSpring) then
-			_BlessingoftheSeasons = _BlessingofSpring;
-		end
-		if ConRO:FindCurrentSpell(_BlessingofSummer) then
-			_BlessingoftheSeasons = _BlessingofSummer;
-		end
-		if ConRO:FindCurrentSpell(_BlessingofAutumn) then
-			_BlessingoftheSeasons = _BlessingofAutumn;
-		end
-		if ConRO:FindCurrentSpell(_BlessingofWinter) then
-			_BlessingoftheSeasons = _BlessingofWinter;
-		end
+	if ConRO:HeroSpec(HeroSpec.HeraldoftheSun) and tChosen[Ability.EternalFlame.talentID] then
+		_WordofGlory, _WordofGlory_RDY = ConRO:AbilityReady(Ability.EternalFlame, timeShift);
+	end
 
 --Warnings
 	ConRO:Warnings("Select an Aura!", GetShapeshiftForm() == 0 and GetNumShapeshiftForms() >= 1);
@@ -243,61 +239,72 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 
 	ConRO:AbilityBurst(_AvengingWrath, _AvengingWrath_RDY and ConRO:BurstMode(_AvengingWrath));
 
-	ConRO:AbilityRaidBuffs(_LightofDawn, _LightofDawn_RDY and _HolyPower >= 3 and not _VanquishersHammer_BUFF);
-	ConRO:AbilityRaidBuffs(_WordofGlory, _WordofGlory_RDY and _HolyPower >= 3);
+	ConRO:AbilityRaidBuffs(_WordofGlory, _WordofGlory_RDY and _HolyPower >= _HolyPower_Max and _in_combat);
+	ConRO:AbilityRaidBuffs(_HolyLight, _HolyLight_RDY and _InfusionofLight_BUFF and _DivineFavor_FORM and _in_combat);
 
 	ConRO:AbilityBurst(_AuraMastery, _AuraMastery_RDY and _in_combat);
-
-	ConRO:AbilityRaidBuffs(_BlessingoftheSeasons, _BlessingoftheSeasons_RDY);
 
 --Rotations
 	repeat
 		while(true) do
 			if _is_Enemy then
-				if _Consecration_RDY and _enemies_in_melee >= 3 then
+				if _Consecration_RDY and not _Consecration_DEBUFF then
 					tinsert(ConRO.SuggestedSpells, _Consecration);
+					_Consecration_RDY = false;
+					_Consecration_DEBUFF = true;
 					_Queue = _Queue + 1;
 					break;
 				end
 
-				if _DivineToll_RDY and _HolyPower <= 0 and ConRO:FullMode(_DivineToll) then
-					tinsert(ConRO.SuggestedSpells, _DivineToll);
+				if _ShieldoftheRighteous_RDY and _HolyPower >= _HolyPower_Max then
+					tinsert(ConRO.SuggestedSpells, _ShieldoftheRighteous);
+					_HolyPower = _HolyPower - 3;
 					_Queue = _Queue + 1;
 					break;
 				end
 
 				if _HolyPrism_RDY then
 					tinsert(ConRO.SuggestedSpells, _HolyPrism);
-					_Queue = _Queue + 1;
-					break;
-				end
-
-				if _HolyShock_RDY and _HolyPower <= 4 then
-					tinsert(ConRO.SuggestedSpells, _HolyShock);
+					_HolyPrism_RDY = false;
 					_Queue = _Queue + 1;
 					break;
 				end
 
 				if _Judgment_RDY then
 					tinsert(ConRO.SuggestedSpells, _Judgment);
+					_Judgment_RDY = false;
+					_HolyPower = _HolyPower + 1;
 					_Queue = _Queue + 1;
 					break;
 				end
 
-				if _CrusaderStrike_RDY and _CrusaderStrike_CHARGES >= 2 and tChosen[Ability.CrusadersMight] then
-					tinsert(ConRO.SuggestedSpells, _CrusaderStrike);
-					_Queue = _Queue + 1;
-					break;
-				end
-
-				if _HammerofWrath_RDY and _can_Execute then
+				if _HammerofWrath_RDY and (_can_Execute or _Veneration_BUFF) then
 					tinsert(ConRO.SuggestedSpells, _HammerofWrath);
+					_HammerofWrath_RDY = false;
+					_HolyPower = _HolyPower + 1;
 					_Queue = _Queue + 1;
 					break;
 				end
 
 				if _CrusaderStrike_RDY and _CrusaderStrike_CHARGES >= 1 then
 					tinsert(ConRO.SuggestedSpells, _CrusaderStrike);
+					_CrusaderStrike_CHARGES = _CrusaderStrike_CHARGES - 1;
+					_HolyPower = _HolyPower + 1;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _HolyShock_RDY and _HolyPower <= 4 then
+					tinsert(ConRO.SuggestedSpells, _HolyShock);
+					_HolyShock_RDY = false;
+					_HolyPower = _HolyPower + 1;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _ShieldoftheRighteous_RDY and _HolyPower >= 3 then
+					tinsert(ConRO.SuggestedSpells, _ShieldoftheRighteous);
+					_HolyPower = _HolyPower - 3;
 					_Queue = _Queue + 1;
 					break;
 				end
@@ -610,7 +617,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Ret_Ability, ids.Ret_Form, ids.Ret_Buff, ids.Ret_Debuff, ids.Ret_PetAbility, ids.Ret_PvPTalent;
 
 --Abilities
-	local _AvengingWrath, _AvengingWrath_RDY = ConRO:AbilityReady(Ability.AvengingWrath, timeShift);
+	local _AvengingWrath, _AvengingWrath_RDY, _AvengingWrath_CD = ConRO:AbilityReady(Ability.AvengingWrath, timeShift);
 		local _AvengingWrath_BUFF = ConRO:Aura(Buff.AvengingWrath, timeShift);
 	local _BladeofJustice, _BladeofJustice_RDY = ConRO:AbilityReady(Ability.BladeofJustice, timeShift);
 		local _Expurgation_DEBUFF = ConRO:TargetAura(Debuff.Expurgation, timeShift);
@@ -638,7 +645,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 	local _TemplarsVerdict, _TemplarsVerdict_RDY = ConRO:AbilityReady(Ability.TemplarsVerdict, timeShift);
 		local _FinalVerdict_BUFF = ConRO:Aura(Buff.FinalVerdict, timeShift);
 		local _DivineArbiter_BUFF, _DivineArbiter_COUNT = ConRO:Aura(Buff.DivineArbiter, timeShift);
-	local _WakeofAshes, _WakeofAshes_RDY = ConRO:AbilityReady(Ability.WakeofAshes, timeShift);
+	local _WakeofAshes, _WakeofAshes_RDY, _WakeofAshes_CD = ConRO:AbilityReady(Ability.WakeofAshes, timeShift);
 	local _WordofGlory, _WordofGlory_RDY = ConRO:AbilityReady(Ability.WordofGlory, timeShift);
 
 --Conditions
@@ -700,14 +707,6 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 					_Queue = _Queue + 1;
 					break;
 				end
-
-				if _ExecutionSentence_RDY and _HolyPower >= 3 and ConRO:FullMode(_ExecutionSentence) then
-					tinsert(ConRO.SuggestedSpells, _ExecutionSentence);
-					_ExecutionSentence_RDY = false;
-					_HolyPower = _HolyPower - 3;
-					_Queue = _Queue + 1;
-					break;
-				end
 			end
 
 			if _AvengingWrath_RDY and not _AvengingWrath_BUFF and _HolyPower >= 3 and not tChosen[Ability.RadiantGlory.talentID] and ConRO:FullMode(_AvengingWrath) then
@@ -725,7 +724,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 				break;
 			end
 
-			if _ExecutionSentence_RDY and (not tChosen[Ability.DivineAuxiliary.talentID] or (tChosen[Ability.DivineAuxiliary.talentID] and _HolyPower <= 2)) and ConRO:FullMode(_ExecutionSentence) then
+			if _ExecutionSentence_RDY and ((_AvengingWrath_BUFF and _AvengingWrath_CD > 15) or tChosen[Ability.RadiantGlory.talentID]) and (_HolyPower >= 3 or (_HolyPower <= 2 and (tChosen[Ability.RadiantGlory.talentID] or tChosen[Ability.DivineAuxiliary.talentID]))) and (_TTD > 8 or (tChosen[Ability.ExecutionersWill.talentID] and _TTD > 12)) and _WakeofAshes_CD <= 1.5 and ConRO:FullMode(_ExecutionSentence) then
 				tinsert(ConRO.SuggestedSpells, _ExecutionSentence);
 				_ExecutionSentence_RDY = false;
 				_Queue = _Queue + 1;
