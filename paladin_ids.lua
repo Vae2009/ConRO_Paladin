@@ -1,7 +1,7 @@
 local ConRO_Paladin, ids = ...;
 
 --General
-	ids.Racial = {
+	ids.racial = {
 		AncestralCall = {spellID = 274738},
 		ArcanePulse = {spellID = 260364},
 		ArcaneTorrent = {spellID = 50613},
@@ -11,40 +11,39 @@ local ConRO_Paladin, ids = ...;
 		Shadowmeld = {spellID = 58984},
 		Warstomp = {spellID = 20549},
 	}
-	ids.HeroSpec = {
+	ids.hero_spec = {
 		Templar = 48,
 		Lightsmith = 49,
 		HeraldoftheSun = 50,
 	}
-	ids.Glyph = {
+	ids.glyph = {
 		Queen = 212641,
 	}
 
---Holy
-	ids.Holy_Ability = {
+ids.holy = {
+	ability = {
 	--Paladin Baseline
+		Absolution = {spellID = 212056},
+		BeaconofLight = {spellID = 53563},
+		Cleanse = {spellID = 4987},
 		Consecration = {spellID = 26573},
 		CrusaderStrike = {spellID = 35395},
+		DivineProtection = {spellID = 498},
 		DivineShield = {spellID = 642},
 		FlashofLight = {spellID = 19750},
 		HammerofJustice = {spellID = 853},
 		HandofReckoning = {spellID = 62124},
+		HolyLight = {spellID = 82326},
 		Intercession = {spellID = 391054},
 		Judgment = {spellID = 275773},
 		Redemption = {spellID = 7328},
 		SenseUndead = {spellID = 5502},
-		WordofGlory = {spellID = 85673},
-	--Holy Baseline
-		Absolution = {spellID = 212056},
-		BeaconofLight = {spellID = 53563},
-		Cleanse = {spellID = 4987},
-		DivineProtection = {spellID = 498},
-		HolyLight = {spellID = 82326},
 		ShieldoftheRighteous = {spellID = 415091},
-		--Passive
+		WordofGlory = {spellID = 85673},
+	--Passive
 		InfusionofLight = {spellID = 53576},
 		MasteryLightbringer = {spellID = 183997},
-	--Paladin
+	--Paladin Talents
 		LayonHands = {spellID = 633, talentID = 102583},
 		AurasoftheResolute = {spellID = 385633, talentID = 102587},
 			ConcentrationAura = {spellID = 317920, talentID = 102587},
@@ -73,6 +72,10 @@ local ConRO_Paladin, ids = ...;
 		Obduracy = {spellID = 385427, talentID = 102622},
 		DivineToll = {spellID = 375576, talentID = 102465},
 		EchoingBlessings = {spellID = 387801, talentID = 115872},
+		unbound_freedom = {
+			spellID = 305394,
+			talentID = 131438,
+		},
 		SanctifiedPlates = {spellID = 402964, talentID = 115034},
 		Punishment = {spellID = 403530, talentID = 115444},
 		DivineReach = {spellID = 469476, talentID = 115447},
@@ -107,7 +110,7 @@ local ConRO_Paladin, ids = ...;
 		OfDuskandDawn = {spellID = 409439, talentID = 115673},
 		Lightbearer = {spellID = 469416, talentID = 128257},
 		LightsRevocation = {spellID = 146956, talentID = 128259},
-	--Holy
+	--Holy Talents
 		HolyShock = {spellID = 20473, talentID = 102534},
 		Extrication = {spellID = 461278, talentID = 102550},
 		LightofDawn = {spellID = 85222, talentID = 102545},
@@ -163,7 +166,7 @@ local ConRO_Paladin, ids = ...;
 			BlessingofWinter = {spellID = 388011, talentID = 116183},
 		InfloresenceoftheSunwell = {spellID = 392907, talentID = 102577},
 		BoundlessSalvation = {spellID = 392951, talentID = 102572},
-	--Hero
+	--Hero Talents
 	--Herald of the Sun
 		Dawnlight = {spellID = 431377, talentID = 117696},
 		MorningStar = {spellID = 431482, talentID = 117670},
@@ -197,11 +200,12 @@ local ConRO_Paladin, ids = ...;
 		Valiance = {spellID = 432919, talentID = 117874},
 		HammerandAnvil = {spellID = 433718, talentID = 117887},
 		BlessingoftheForge = {spellID = 433011, talentID = 117875},
-	}
-	ids.Holy_PvPTalent = {
+	},
+	pvptalent = {
 
-	}
-	ids.Holy_Form = {
+	},
+	buff = {
+		AvengingWrath = 31884,
 		BeaconofFaith = 156910,
 		BeaconofLight = 53563,
 		ConcentrationAura = 317920,
@@ -209,26 +213,21 @@ local ConRO_Paladin, ids = ...;
 		CrusaderAura = 32223,
 		DevotionAura = 465,
 		DivineFavor = 210294,
-		RetributionAura = 183435,
-	}
-	ids.Holy_Buff = {
-		AvengingWrath = 31884,
 		DivinePurpose = 223819,
 		InfusionofLight = 54149,
+		RetributionAura = 183435,
 		Veneration = 392939,
-	}
-	ids.Holy_Debuff = {
+	},
+	debuff = {
 		Consecration = 204242,
 		Forbearance = 25771,
 		Judgment = 197277,
 	}
-	ids.Holy_PetAbility = {
+}
 
-	}
-
---Protection
-	ids.Prot_Ability = {
-	--Paladin Baseline
+ids.protection = {
+	ability = {
+	--Baseline
 		Consecration = {spellID = 26573},
 		CrusaderStrike = {spellID = 35395},
 		DivineShield = {spellID = 642},
@@ -241,12 +240,11 @@ local ConRO_Paladin, ids = ...;
 		SenseUndead = {spellID = 5502},
 		ShieldoftheRighteous = {spellID = 53600},
 		WordofGlory = {spellID = 85673},
-	--Protection Baseline
-		--Passive
+	--Passive
 		AegisofLight = {spellID = 353367},
 		MasteryDivineBulwark = {spellID = 76671},
 		Riposte = {spellID = 161800},
-	--Paladin
+	--Paladin Talents
 		LayonHands = {spellID = 633, talentID = 102583},
 		AurasoftheResolute = {spellID = 385633, talentID = 102587},
 			ConcentrationAura = {spellID = 317920, talentID = 102587},
@@ -309,7 +307,7 @@ local ConRO_Paladin, ids = ...;
 		OfDuskandDawn = {spellID = 409441, talentID = 115672},
 		Lightbearer = {spellID = 469416, talentID = 128257},
 		LightsRevocation = {spellID = 146956, talentID = 128259},
-	--Protection
+	--Protection Talents
 		AvengersShield = {spellID = 31935, talentID = 102471},
 		HolyShield = {spellID = 152261, talentID = 102455},
 		HammeroftheRighteous = {spellID = 53595, talentID = 102431},
@@ -356,7 +354,7 @@ local ConRO_Paladin, ids = ...;
 		InmostLight = {spellID = 405757, talentID = 115167},
 		FinalStand = {spellID = 204077, talentID = 102473},
 		RighteousProtector = {spellID = 204074, talentID = 102440},
-	--Hero
+	--Hero Talents
 	--Lightsmith
 		HolyArmaments = {spellID = 432459, talentID = 117882},
 			HolyBulwark = {spellID = 432459, talentID = 117882},
@@ -391,47 +389,44 @@ local ConRO_Paladin, ids = ...;
 		Hammerfall = {spellID = 432463, talentID = 117818},
 		UndisputedRuling = {spellID = 432626, talentID = 117822},
 		LightsDeliverance = {spellID = 425518, talentID = 117815},
-	}
-	ids.Prot_PvPTalent = {
+	},
+	pvptalent = {
 
-	}
-	ids.Prot_Form = {
-		ConcentrationAura = 317920,
-		Consecration = 188370,
-		CrusaderAura = 32223,
-		DevotionAura = 465,
-		RetributionAura = 183435,
-	}
-	ids.Prot_Buff = {
+	},
+	buff = {
 		ArdentDefender = 31850,
 		AvengersValor = 197561,
 		AvengingWrath = 31884,
 		BastionofLight = 378974,
 		BlessingofDawn = 385127,
 		BulwarkofRighteousFury = 386652,
+		ConcentrationAura = 317920,
+		Consecration = 188370,
+		CrusaderAura = 32223,
+		DevotionAura = 465,
 		DivinePurpose = 223819,
 		GuardianofAncientKings = 86659,
 		MomentofGlory = 327193,
 		Redoubt = 280375,
+		RetributionAura = 183435,
 		ShaketheHeavens = 431536,
 		ShieldoftheRighteous = 132403,
 		ShiningLight = 327510,
 		ShiningLight_Stack = 182104,
-	}
-	ids.Prot_Debuff = {
+	},
+	debuff = {
 		BlessedHammer = 204301,
 		Forbearance = 25771,
 		Judgment = 197277,
 	}
-	ids.Prot_PetAbility = {
+}
 
-	}
-
---Retribution
-	ids.Ret_Ability = {
-	--Paladin Baseline
+ids.retribution = {
+	ability = {
+	--Baseline
 		CrusaderStrike = {spellID = 35395},
 		DivineShield = {spellID = 642},
+		DivineProtection = {spellID = 403876},
 		FlashofLight = {spellID = 19750},
 		HammerofJustice = {spellID = 853},
 		HandofReckoning = {spellID = 62124},
@@ -440,16 +435,13 @@ local ConRO_Paladin, ids = ...;
 		Redemption = {spellID = 7328},
 		SenseUndead = {spellID = 5502},
 		ShieldoftheRighteous = {spellID = 53600},
-		WordofGlory = {spellID = 85673},
-		--Passive
-		ConsecratedBlade = {spellID = 462970},
-	--Retribution Baseline
-		DivineProtection = {spellID = 403876},
 		TemplarsVerdict = {spellID = 85256},
-		--Passive
+		WordofGlory = {spellID = 85673},
+	--Passive
+		ConsecratedBlade = {spellID = 462970},
 		InstrumentsofRetribution = {spellID = 404752},
 		MasteryHighlordsJudgment = {spellID = 267316},
-	--Paladin
+	--Paladin Talents
 		LayonHands = {spellID = 633, talentID = 102583},
 		AurasoftheResolute = {spellID = 385633, talentID = 102587},
 			ConcentrationAura = {spellID = 317920, talentID = 102587},
@@ -513,7 +505,7 @@ local ConRO_Paladin, ids = ...;
 		OfDuskandDawn = {spellID = 385125, talentID = 102615},
 		Lightbearer = {spellID = 469416, talentID = 128257},
 		LightsRevocation = {spellID = 146956, talentID = 128259},
-	--Retribution
+	--Retribution Talents
 		BladeofJustice = {spellID = 184575, talentID = 102498},
 		DivineStorm = {spellID = 53385, talentID = 102499},
 		SwiftJustice = {spellID = 383228, talentID = 102491},
@@ -569,7 +561,7 @@ local ConRO_Paladin, ids = ...;
 		RadiantGlory = {spellID = 458359, talentID = 102525},
 		BurntoAsh = {spellID = 446663, talentID = 114824},
 		SearingLight = {spellID = 404540, talentID = 102530},
-	--Hero
+	--Hero Talents
 	--Herald of the Sun
 		Dawnlight = {spellID = 431377, talentID = 117696},
 		MorningStar = {spellID = 431482, talentID = 117670},
@@ -601,8 +593,8 @@ local ConRO_Paladin, ids = ...;
 		Hammerfall = {spellID = 432463, talentID = 117818},
 		UndisputedRuling = {spellID = 432626, talentID = 117822},
 		LightsDeliverance = {spellID = 425518, talentID = 117815},
-	}
-	ids.Ret_PvPTalent = {
+	},
+	pvptalent = {
 		Luminescence = 199428,
 		UnboundFreedom = 305394,
 		VengeanceAura = 210323,
@@ -613,18 +605,15 @@ local ConRO_Paladin, ids = ...;
 		Jurisdiction = 204979,
 		LawandOrder = 204934,
 		CleansingLight = 236186,
-	}
-	ids.Ret_Form = {
-		ConcentrationAura = 317920,
-		Consecration = 188370,
-		CrusaderAura = 32223,
-		DevotionAura = 465,
-		RetributionAura = 183435,
-	}
-	ids.Ret_Buff = {
+	},
+	buff = {
 		AvengingWrath = 31884,
 		BlessingofAnshe = 445206,
+		ConcentrationAura = 317920,
+		Consecration = 188370,
 		Crusade = 231895,
+		CrusaderAura = 32223,
+		DevotionAura = 465,
 		DivineArbiter = 406975,
 		EmpyreanLegacy = 387178,
 		EndlessWrath = 452244,
@@ -632,13 +621,12 @@ local ConRO_Paladin, ids = ...;
 		RighteousVerdict = 267611,
 		DivinePurpose = 223819,
 		EmpyreanPower = 326733,
-	}
-	ids.Ret_Debuff = {
+		RetributionAura = 183435,
+	},
+	debuff = {
 		Consecration = 204242,
 		Expurgation = 383346,
 		Forbearance = 25771,
 		Judgment = 197277,
-	}
-	ids.Ret_PetAbility = {
-
-	}
+	},
+}

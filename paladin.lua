@@ -4,6 +4,7 @@ end
 ConRO.Paladin.CheckPvPTalents = function()
 end
 local ConRO_Paladin, ids = ...;
+local Ability, Buff, Debuff, PvPTalent = _, _, _, _;
 
 function ConRO:EnableRotationModule(mode)
 	mode = mode or 0;
@@ -11,19 +12,25 @@ function ConRO:EnableRotationModule(mode)
 	self.ModuleOnEnable = ConRO.Paladin.CheckPvPTalents;
 	if mode == 0 then
 		self.Description = "Paladin [No Specialization Under 10]";
-		self.NextSpell = ConRO.Paladin.Under10;
+		self.NextSpell = ConRO.Paladin.Disabled;
+		self.NextDef = ConRO.Paladin.Disabled;
 		self.ToggleHealer();
+		ConROWindow:SetAlpha(0);
+		ConRODefenseWindow:SetAlpha(0);
 	end;
 	if mode == 1 then
 		self.Description = "Paladin [Holy - Healer]";
 		if ConRO.db.profile._Spec_1_Enabled then
+			Ability, Buff, Debuff, PvPTalent = ids.holy.ability, ids.holy.buff, ids.holy.debuff, ids.holy.pvptalent;
 			self.NextSpell = ConRO.Paladin.Holy;
+			self.NextDef = ConRO.Paladin.HolyDef;
 			self.ToggleDamage();
 			self.BlockAoE();
 			ConROWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 			ConRODefenseWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 		else
 			self.NextSpell = ConRO.Paladin.Disabled;
+			self.NextDef = ConRO.Paladin.Disabled;
 			self.ToggleHealer();
 			ConROWindow:SetAlpha(0);
 			ConRODefenseWindow:SetAlpha(0);
@@ -32,13 +39,16 @@ function ConRO:EnableRotationModule(mode)
 	if mode == 2 then
 		self.Description = "Paladin [Protection - Tank]";
 		if ConRO.db.profile._Spec_2_Enabled then
+			Ability, Buff, Debuff, PvPTalent = ids.protection.ability, ids.protection.buff, ids.protection.debuff, ids.protection.pvptalent;
 			self.NextSpell = ConRO.Paladin.Protection;
+			self.NextDef = ConRO.Paladin.ProtectionDef;
 			self.ToggleDamage();
 			self.BlockAoE();
 			ConROWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 			ConRODefenseWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 		else
 			self.NextSpell = ConRO.Paladin.Disabled;
+			self.NextDef = ConRO.Paladin.Disabled;
 			self.ToggleHealer();
 			ConROWindow:SetAlpha(0);
 			ConRODefenseWindow:SetAlpha(0);
@@ -47,12 +57,15 @@ function ConRO:EnableRotationModule(mode)
 	if mode == 3 then
 		self.Description = "Paladin [Retribution - Melee]";
 		if ConRO.db.profile._Spec_3_Enabled then
+			Ability, Buff, Debuff, PvPTalent = ids.retribution.ability, ids.retribution.buff, ids.retribution.debuff, ids.retribution.pvptalent;
 			self.NextSpell = ConRO.Paladin.Retribution;
+			self.NextDef = ConRO.Paladin.RetributionDef;
 			self.ToggleDamage();
 			ConROWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 			ConRODefenseWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 		else
 			self.NextSpell = ConRO.Paladin.Disabled;
+			self.NextDef = ConRO.Paladin.Disabled;
 			self.ToggleHealer();
 			ConROWindow:SetAlpha(0);
 			ConRODefenseWindow:SetAlpha(0);
@@ -63,31 +76,7 @@ function ConRO:EnableRotationModule(mode)
 end
 
 function ConRO:EnableDefenseModule(mode)
-	mode = mode or 0;
-	if mode == 0 then
-		self.NextDef = ConRO.Paladin.Under10Def;
-	end;
-	if mode == 1 then
-		if ConRO.db.profile._Spec_1_Enabled then
-			self.NextDef = ConRO.Paladin.HolyDef;
-		else
-			self.NextDef = ConRO.Paladin.Disabled;
-		end
-	end;
-	if mode == 2 then
-		if ConRO.db.profile._Spec_2_Enabled then
-			self.NextDef = ConRO.Paladin.ProtectionDef;
-		else
-			self.NextDef = ConRO.Paladin.Disabled;
-		end
-	end;
-	if mode == 3 then
-		if ConRO.db.profile._Spec_3_Enabled then
-			self.NextDef = ConRO.Paladin.RetributionDef;
-		else
-			self.NextDef = ConRO.Paladin.Disabled;
-		end
-	end;
+
 end
 
 function ConRO:UNIT_SPELLCAST_SUCCEEDED(event, unitID, lineID, spellID)
@@ -128,7 +117,7 @@ local _can_Execute = _Target_Percent_Health < 20;
 --Racials
 local _ArcaneTorrent, _ArcaneTorrent_RDY = _, _;
 
-local HeroSpec, Racial = ids.HeroSpec, ids.Racial;
+local HeroSpec, Racial = ids.hero_spec, ids.racial;
 
 function ConRO:Stats()
 	_Player_Level = UnitLevel("player");
@@ -140,6 +129,7 @@ function ConRO:Stats()
 	_is_Enemy = ConRO:TarHostile();
 	_Target_Health = UnitHealth('target');
 	_Target_Percent_Health = ConRO:PercentHealth('target');
+	_TTD = ConRO:GetTimeToDie();
 
 	_Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
 	_HolyPower, _HolyPower_Max = ConRO:PlayerPower('HolyPower');
@@ -155,34 +145,9 @@ function ConRO:Stats()
 	_ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(Racial.ArcaneTorrent, timeShift);
 end
 
-function ConRO.Paladin.Under10(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedSpells);
-	ConRO:Stats();
---Abilities
-
---Warnings
-
---Rotations
-
-	return nil;
-end
-
-function ConRO.Paladin.Under10Def(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedDefSpells);
-	ConRO:Stats();
---Abilities
-
---Warnings
-
---Rotations
-
-	return nil;
-end
-
 function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Holy_Ability, ids.Holy_Form, ids.Holy_Buff, ids.Holy_Debuff, ids.Holy_PetAbility, ids.Holy_PvPTalent;
 
 --Abilities
 	local _AvengingWrath, _AvengingWrath_RDY = ConRO:AbilityReady(Ability.AvengingWrath, timeShift);
@@ -213,7 +178,7 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _BlessingofWinter, _BlessingofWinter_RDY = ConRO:AbilityReady(Ability.BlessingofWinter, timeShift);
 	local _DivineToll, _DivineToll_RDY = ConRO:AbilityReady(Ability.DivineToll, timeShift);
 	local _HolyPrism, _HolyPrism_RDY = ConRO:AbilityReady(Ability.HolyPrism, timeShift);
-		local _DivineFavor_FORM = ConRO:Form(Form.DivineFavor);
+		local _DivineFavor_FORM = ConRO:Form(Buff.DivineFavor);
 	local _HolyShock, _HolyShock_RDY = ConRO:AbilityReady(Ability.HolyShock, timeShift);
 		local _InfusionofLight_BUFF = ConRO:Aura(Buff.InfusionofLight, timeShift);
 	local _LightofDawn, _LightofDawn_RDY = ConRO:AbilityReady(Ability.LightofDawn, timeShift);
@@ -232,10 +197,11 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	ConRO:Warnings("Select an Aura!", GetShapeshiftForm() == 0 and GetNumShapeshiftForms() >= 1);
 
 --Indicators
+	ConRO:AbilityInterrupt(_Rebuke, _Rebuke_RDY and ConRO:Interrupt());
 	ConRO:AbilityPurge(_ArcaneTorrent, _ArcaneTorrent_RDY and _target_in_melee and ConRO:Purgable());
 
-	ConRO:AbilityRaidBuffs(_BeaconofLight, _BeaconofLight_RDY and not ConRO:OneBuff(Form.BeaconofLight));
-	ConRO:AbilityRaidBuffs(_BeaconofFaith, _BeaconofFaith_RDY and not ConRO:OneBuff(Form.BeaconofFaith));
+	ConRO:AbilityRaidBuffs(_BeaconofLight, _BeaconofLight_RDY and not ConRO:OneBuff(Buff.BeaconofLight));
+	ConRO:AbilityRaidBuffs(_BeaconofFaith, _BeaconofFaith_RDY and not ConRO:OneBuff(Buff.BeaconofFaith));
 
 	ConRO:AbilityBurst(_AvengingWrath, _AvengingWrath_RDY and ConRO:BurstMode(_AvengingWrath));
 
@@ -245,9 +211,9 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	ConRO:AbilityBurst(_AuraMastery, _AuraMastery_RDY and _in_combat);
 
 --Rotations
-	repeat
-		while(true) do
-			if _is_Enemy then
+	if _is_Enemy then
+		repeat
+			while(true) do
 				if _Consecration_RDY and not _Consecration_DEBUFF then
 					tinsert(ConRO.SuggestedSpells, _Consecration);
 					_Consecration_RDY = false;
@@ -308,49 +274,47 @@ function ConRO.Paladin.Holy(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 					_Queue = _Queue + 1;
 					break;
 				end
-			end
 
-			tinsert(ConRO.SuggestedSpells, 289603); --Waiting Spell Icon
-			_Queue = _Queue + 3;
-			break;
-		end
-	until _Queue >= 3;
+				tinsert(ConRO.SuggestedSpells, 289603); --Waiting Spell Icon
+				_Queue = _Queue + 3;
+				break;
+			end
+		until _Queue >= 3;
+	end
 return nil;
 end
 
 function ConRO.Paladin.HolyDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedDefSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Holy_Ability, ids.Holy_Form, ids.Holy_Buff, ids.Holy_Debuff, ids.Holy_PetAbility, ids.Holy_PvPTalent;
 
 --Abilities
-	local _BlessingofProtection, _BlessingofProtection_RDY = ConRO:AbilityReady(ids.Holy_Ability.BlessingofProtection, timeShift);
-	local _DivineProtection, _DivineProtection_RDY = ConRO:AbilityReady(ids.Holy_Ability.DivineProtection, timeShift);
-	local _DivineShield, _DivineShield_RDY = ConRO:AbilityReady(ids.Holy_Ability.DivineShield, timeShift);
-	local _LayonHands, _LayonHands_RDY = ConRO:AbilityReady(ids.Holy_Ability.LayonHands, timeShift);
-		local _Forbearance_BUFF = ConRO:Aura(ids.Holy_Debuff.Forbearance, timeShift, 'HARMFUL');
+	local _BlessingofProtection, _BlessingofProtection_RDY = ConRO:AbilityReady(Ability.BlessingofProtection, timeShift);
+	local _DivineProtection, _DivineProtection_RDY = ConRO:AbilityReady(Ability.DivineProtection, timeShift);
+	local _DivineShield, _DivineShield_RDY = ConRO:AbilityReady(Ability.DivineShield, timeShift);
+	local _LayonHands, _LayonHands_RDY = ConRO:AbilityReady(Ability.LayonHands, timeShift);
+		local _Forbearance_BUFF = ConRO:Aura(Debuff.Forbearance, timeShift, 'HARMFUL');
 
 --Rotations
-		if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
-			tinsert(ConRO.SuggestedDefSpells, _LayonHands);
-		end
+	if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
+		tinsert(ConRO.SuggestedDefSpells, _LayonHands);
+	end
 
-		if _DivineProtection_RDY then
-			tinsert(ConRO.SuggestedDefSpells, _DivineProtection);
-		end
+	if _DivineProtection_RDY then
+		tinsert(ConRO.SuggestedDefSpells, _DivineProtection);
+	end
 
-		if _DivineShield_RDY and not _Forbearance_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _DivineShield);
-		elseif _BlessingofProtection_RDY and not _Forbearance_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _BlessingofProtection);
-		end
-	return nil;
+	if _DivineShield_RDY and not _Forbearance_BUFF then
+		tinsert(ConRO.SuggestedDefSpells, _DivineShield);
+	elseif _BlessingofProtection_RDY and not _Forbearance_BUFF then
+		tinsert(ConRO.SuggestedDefSpells, _BlessingofProtection);
+	end
+return nil;
 end
 
 function ConRO.Paladin.Protection(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Prot_Ability, ids.Prot_Form, ids.Prot_Buff, ids.Prot_Debuff, ids.Prot_PetAbility, ids.Prot_PvPTalent;
 
 --Abilities
 	local _AvengersShield, _AvengersShield_RDY = ConRO:AbilityReady(Ability.AvengersShield, timeShift);
@@ -360,7 +324,7 @@ function ConRO.Paladin.Protection(_, timeShift, currentSpell, gcd, tChosen, pvpC
 		local _AvengingWrath_BUFF = ConRO:Aura(Buff.AvengingWrath, timeShift);
 	local _BastionofLight, _BastionofLight_RDY = ConRO:AbilityReady(Ability.BastionofLight, timeShift);
 	local _Consecration, _Consecration_RDY = ConRO:AbilityReady(Ability.Consecration, timeShift);
-		local _Consecration_FORM = ConRO:Form(Form.Consecration);
+		local _Consecration_FORM = ConRO:Form(Buff.Consecration);
 	local _CrusaderStrike, _CrusaderStrike_RDY = ConRO:AbilityReady(Ability.CrusaderStrike, timeShift);
 		local _CrusaderStrike_CHARGES = ConRO:SpellCharges(Ability.CrusaderStrike.spellID);
 	local _DivineToll, _DivineToll_RDY = ConRO:AbilityReady(Ability.DivineToll, timeShift);
@@ -567,7 +531,6 @@ end
 function ConRO.Paladin.ProtectionDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedDefSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Prot_Ability, ids.Prot_Form, ids.Prot_Buff, ids.Prot_Debuff, ids.Prot_PetAbility, ids.Prot_PvPTalent;
 
 --Abilities
 	local _ArdentDefender, _ArdentDefender_RDY, _ArdentDefender_CD = ConRO:AbilityReady(Ability.ArdentDefender, timeShift);
@@ -585,36 +548,35 @@ function ConRO.Paladin.ProtectionDef(_, timeShift, currentSpell, gcd, tChosen, p
 	local _WordofGlory, _WordofGlory_RDY = ConRO:AbilityReady(Ability.WordofGlory, timeShift);
 
 --Rotations
-		if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
-			tinsert(ConRO.SuggestedDefSpells, _LayonHands);
-		end
+	if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
+		tinsert(ConRO.SuggestedDefSpells, _LayonHands);
+	end
 
-		if _WordofGlory_RDY and ((_HolyPower >= 3 or _ShiningLight_BUFF) and _Player_Percent_Health <= 80) then
-			tinsert(ConRO.SuggestedDefSpells, _WordofGlory);
-		end
+	if _WordofGlory_RDY and ((_HolyPower >= 3 or _ShiningLight_BUFF) and _Player_Percent_Health <= 80) then
+		tinsert(ConRO.SuggestedDefSpells, _WordofGlory);
+	end
 
-		if _ShieldoftheRighteous_RDY and not _ShieldoftheRighteous_BUFF and _HolyPower >= 3 and not _ArdentDefender_BUFF and not _GuardianofAncientKings_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _ShieldoftheRighteous);
-		end
+	if _ShieldoftheRighteous_RDY and not _ShieldoftheRighteous_BUFF and _HolyPower >= 3 and not _ArdentDefender_BUFF and not _GuardianofAncientKings_BUFF then
+		tinsert(ConRO.SuggestedDefSpells, _ShieldoftheRighteous);
+	end
 
-		if _EyeofTyr_RDY and _target_in_melee and not _ShieldoftheRighteous_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _EyeofTyr);
-		end
+	if _EyeofTyr_RDY and _target_in_melee and not _ShieldoftheRighteous_BUFF then
+		tinsert(ConRO.SuggestedDefSpells, _EyeofTyr);
+	end
 
-		if _ArdentDefender_RDY and not _ArdentDefender_BUFF and not _GuardianofAncientKings_BUFF and not _ShieldoftheRighteous_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _ArdentDefender);
-		end
+	if _ArdentDefender_RDY and not _ArdentDefender_BUFF and not _GuardianofAncientKings_BUFF and not _ShieldoftheRighteous_BUFF then
+		tinsert(ConRO.SuggestedDefSpells, _ArdentDefender);
+	end
 
-		if _GuardianofAncientKings_RDY and not _GuardianofAncientKings_BUFF and not _ArdentDefender_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _GuardianofAncientKings);
-		end
-	return nil;
+	if _GuardianofAncientKings_RDY and not _GuardianofAncientKings_BUFF and not _ArdentDefender_BUFF then
+		tinsert(ConRO.SuggestedDefSpells, _GuardianofAncientKings);
+	end
+return nil;
 end
 
 function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Ret_Ability, ids.Ret_Form, ids.Ret_Buff, ids.Ret_Debuff, ids.Ret_PetAbility, ids.Ret_PvPTalent;
 
 --Abilities
 	local _AvengingWrath, _AvengingWrath_RDY, _AvengingWrath_CD = ConRO:AbilityReady(Ability.AvengingWrath, timeShift);
@@ -700,6 +662,14 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 					break;
 				end
 
+				if _DivineHammer_RDY and _HolyPower >= 3 and ConRO:FullMode(_DivineHammer) then
+					tinsert(ConRO.SuggestedSpells, _DivineHammer);
+					_DivineHammer_RDY = false;
+					_HolyPower = _HolyPower - 3;
+					_Queue = _Queue + 1;
+					break;
+				end
+
 				if _Judgment_RDY and _HolyPower <= 4 then
 					tinsert(ConRO.SuggestedSpells, _Judgment);
 					_Judgment_RDY = false;
@@ -707,6 +677,14 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 					_Queue = _Queue + 1;
 					break;
 				end
+			end
+
+			if _DivineHammer_RDY and _HolyPower >= 3 and ConRO:FullMode(_DivineHammer) then
+				tinsert(ConRO.SuggestedSpells, _DivineHammer);
+				_DivineHammer_RDY = false;
+				_HolyPower = _HolyPower - 3;
+				_Queue = _Queue + 1;
+				break;
 			end
 
 			if _AvengingWrath_RDY and not _AvengingWrath_BUFF and _HolyPower >= 3 and not tChosen[Ability.RadiantGlory.talentID] and ConRO:FullMode(_AvengingWrath) then
@@ -768,9 +746,9 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 				break;
 			end
 
-			if _TemplarStrike_RDY and ConRO:IsOverride(_TemplarStrike) == _TemplarSlash then
-				tinsert(ConRO.SuggestedSpells, _TemplarStrike);
-				_TemplarStrike_RDY = false;
+			if _TemplarSlash_RDY and ConRO:IsOverride(_TemplarStrike) == _TemplarSlash then
+				tinsert(ConRO.SuggestedSpells, _TemplarSlash);
+				_TemplarSlash_RDY = false;
 				_HolyPower = _HolyPower + 1;
 				_Queue = _Queue + 1;
 				break;
@@ -872,7 +850,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 				break;
 			end
 
-			tinsert(ConRO.SuggestedSpells, 289603); --Waiting Spell Icon
+			tinsert(ConRO.SuggestedSpells, 6603); --Waiting Spell Icon
 			_Queue = _Queue + 3;
 			break;
 		end
@@ -883,11 +861,11 @@ end
 function ConRO.Paladin.RetributionDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedDefSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Ret_Ability, ids.Ret_Form, ids.Ret_Buff, ids.Ret_Debuff, ids.Ret_PetAbility, ids.Ret_PvPTalent;
 
 --Abilities
 	local _BlessingofProtection, _BlessingofProtection_RDY = ConRO:AbilityReady(Ability.BlessingofProtection, timeShift);
 	local _DivineShield, _DivineShield_RDY = ConRO:AbilityReady(Ability.DivineShield, timeShift);
+	local _DivineProtection, _DivineProtection_RDY = ConRO:AbilityReady(Ability.DivineProtection, timeShift);
 	local _FlashofLight, _FlashofLight_RDY = ConRO:AbilityReady(Ability.FlashofLight, timeShift);
 		local _, _SelflessHealer_COUNT = ConRO:Aura(Buff.SelflessHealer, timeShift);
 	local _LayonHands, _LayonHands_RDY = ConRO:AbilityReady(Ability.LayonHands, timeShift);
@@ -896,28 +874,32 @@ function ConRO.Paladin.RetributionDef(_, timeShift, currentSpell, gcd, tChosen, 
 	local _WordofGlory, _WordofGlory_RDY = ConRO:AbilityReady(Ability.WordofGlory, timeShift);
 
 --Rotations
-		if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
-			tinsert(ConRO.SuggestedDefSpells, _LayonHands);
-		end
+	if _LayonHands_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 10 then
+		tinsert(ConRO.SuggestedDefSpells, _LayonHands);
+	end
 
-		if _FlashofLight_RDY and _SelflessHealer_COUNT >= 4 and _Player_Percent_Health <= 80 then
-			tinsert(ConRO.SuggestedDefSpells, _FlashofLight);
-		end
+	if _FlashofLight_RDY and _SelflessHealer_COUNT >= 4 and _Player_Percent_Health <= 80 then
+		tinsert(ConRO.SuggestedDefSpells, _FlashofLight);
+	end
 
-		if _WordofGlory_RDY and _HolyPower >= 3 and _Player_Percent_Health <= 40 then
-			tinsert(ConRO.SuggestedDefSpells, _WordofGlory);
-		end
+	if _WordofGlory_RDY and _HolyPower >= 3 and _Player_Percent_Health <= 70 then
+		tinsert(ConRO.SuggestedDefSpells, _WordofGlory);
+	end
 
-		if _ShieldofVengeance_RDY then
-			tinsert(ConRO.SuggestedDefSpells, _ShieldofVengeance);
-		end
+	if _DivineProtection_RDY and _Player_Percent_Health <= 90 then
+		tinsert(ConRO.SuggestedDefSpells, _DivineProtection);
+	end
 
-		if _DivineShield_RDY and not _Forbearance_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _DivineShield);
-		end
+	if _ShieldofVengeance_RDY and _Player_Percent_Health <= 90 then
+		tinsert(ConRO.SuggestedDefSpells, _ShieldofVengeance);
+	end
 
-		if _BlessingofProtection_RDY and not _Forbearance_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _BlessingofProtection);
-		end
-	return nil;
+	if _DivineShield_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 50 then
+		tinsert(ConRO.SuggestedDefSpells, _DivineShield);
+	end
+
+	if _BlessingofProtection_RDY and not _Forbearance_BUFF and _Player_Percent_Health <= 50 then
+		tinsert(ConRO.SuggestedDefSpells, _BlessingofProtection);
+	end
+return nil;
 end

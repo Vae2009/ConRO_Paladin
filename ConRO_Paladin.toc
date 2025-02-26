@@ -1,7 +1,8 @@
 ## Title:-|cffFFFFFFConRO|r- |cffF58CBAPaladin|r
-## Version: 11.0.5
+## Version: 11.1.0
 ## Author: Vae
-## Interface: 110007
+## Interface: 110100
+## Category: ConRO
 ## Dependencies: ConRO
 ## LoadOnDemand: 1
 
