@@ -654,7 +654,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 					break;
 				end
 
-				if _DivineToll_RDY and _HolyPower <= 3 and _target_in_30yrds and ConRO:FullMode(_DivineToll) then
+				if _DivineToll_RDY and _HolyPower <= 3 and _target_in_30yrds then
 					tinsert(ConRO.SuggestedSpells, _DivineToll);
 					_DivineToll_RDY = false;
 					_HolyPower = _HolyPower + _enemies_in_30yrds;
@@ -662,7 +662,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 					break;
 				end
 
-				if _DivineHammer_RDY and _HolyPower >= 3 and ConRO:FullMode(_DivineHammer) then
+				if _DivineHammer_RDY and _HolyPower >= 3 then
 					tinsert(ConRO.SuggestedSpells, _DivineHammer);
 					_DivineHammer_RDY = false;
 					_HolyPower = _HolyPower - 3;
@@ -679,7 +679,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 				end
 			end
 
-			if _DivineHammer_RDY and _HolyPower >= 3 and ConRO:FullMode(_DivineHammer) then
+			if _DivineHammer_RDY and _HolyPower >= 3 then
 				tinsert(ConRO.SuggestedSpells, _DivineHammer);
 				_DivineHammer_RDY = false;
 				_HolyPower = _HolyPower - 3;
@@ -730,7 +730,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 				break;
 			end
 
-			if _WakeofAshes_RDY and _HolyPower <= 2 and ((ConRO_AutoButton:IsVisible() and _enemies_in_melee >= 2) or ConRO_AoEButton:IsVisible()) and ConRO:FullMode(_WakeofAshes) then
+			if _WakeofAshes_RDY and _HolyPower <= 2 and ((ConRO_AutoButton:IsVisible() and _enemies_in_melee >= 2) or ConRO_AoEButton:IsVisible()) then
 				tinsert(ConRO.SuggestedSpells, _WakeofAshes);
 				_WakeofAshes_RDY = false;
 				_HolyPower = _HolyPower + 3;
@@ -738,7 +738,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 				break;
 			end
 
-			if _DivineToll_RDY and _target_in_30yrds and ((ConRO_AutoButton:IsVisible() and _enemies_in_melee >= 2) or ConRO_AoEButton:IsVisible()) and ConRO:FullMode(_DivineToll) then
+			if _DivineToll_RDY and _target_in_30yrds and ((ConRO_AutoButton:IsVisible() and _enemies_in_melee >= 2) or ConRO_AoEButton:IsVisible()) then
 				tinsert(ConRO.SuggestedSpells, _DivineToll);
 				_DivineToll_RDY = false;
 				_HolyPower = _HolyPower + _enemies_in_30yrds;
@@ -763,7 +763,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 				break;
 			end
 
-			if _WakeofAshes_RDY and _HolyPower <= 2 and ConRO:FullMode(_WakeofAshes) then
+			if _WakeofAshes_RDY and _HolyPower <= 2 then
 				tinsert(ConRO.SuggestedSpells, _WakeofAshes);
 				_WakeofAshes_RDY = false;
 				_HolyPower = _HolyPower + 3;
@@ -771,7 +771,7 @@ function ConRO.Paladin.Retribution(_, timeShift, currentSpell, gcd, tChosen, pvp
 				break;
 			end
 
-			if _DivineToll_RDY and _target_in_30yrds and ConRO:FullMode(_DivineToll) then
+			if _DivineToll_RDY and _target_in_30yrds then
 				tinsert(ConRO.SuggestedSpells, _DivineToll);
 				_DivineToll_RDY = false;
 				_HolyPower = _HolyPower + _enemies_in_30yrds;
